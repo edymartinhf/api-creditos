@@ -2,6 +2,7 @@ package com.bootcamp.bank.creditos.application;
 
 import com.bootcamp.bank.creditos.application.util.Util;
 import com.bootcamp.bank.creditos.infrastructure.client.ClientApiClientes;
+import com.bootcamp.bank.creditos.infrastructure.exception.BusinessException;
 import com.bootcamp.bank.creditos.infrastructure.repository.CreditoProductoRepository;
 import com.bootcamp.bank.creditos.infrastructure.repository.dao.CreditoProductoDao;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class CreditoUseCase {
 
             CreditoProductoDao finalCreditoProductoDao = creditoProductoDao;
             return clientApiClientes.getClientes(creditoProductoDao.getIdCliente())
-                        .switchIfEmpty(Mono.error(new Exception()))
+                        .switchIfEmpty(Mono.error(()->new BusinessException("No existe cliente con el id "+finalCreditoProductoDao.getIdCliente())))
                         .flatMap(c -> {
                             return creditoProductoRepository.findByIdCliente(finalCreditoProductoDao.getIdCliente())
                                   .next()
@@ -53,7 +54,7 @@ public class CreditoUseCase {
 
             CreditoProductoDao finalCreditoProductoDao = creditoProductoDao;
             return clientApiClientes.getClientes(creditoProductoDao.getIdCliente())
-                    .switchIfEmpty(Mono.error(new Exception())
+                    .switchIfEmpty(Mono.error(()->new BusinessException("No existe cliente con el id "+finalCreditoProductoDao.getIdCliente()))
                     ).flatMap(c->{
                         log.info("se encontro cliente "+c.getId()+" nombre:"+c.getNombre());
                         return creditoProductoRepository.save(finalCreditoProductoDao);

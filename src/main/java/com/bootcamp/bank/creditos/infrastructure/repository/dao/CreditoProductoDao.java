@@ -20,4 +20,5 @@ public class CreditoProductoDao {
     private String  fechaCreacion;
     private Double  lineaCredito;
 
+
 }
